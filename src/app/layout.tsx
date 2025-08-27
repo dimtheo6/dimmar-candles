@@ -7,6 +7,7 @@ import "./globals.css";
 import { bodyFontVars } from "@/lib/fonts";
 import Header from "@/components/header"; // adjust path if different
 import ReactQueryProvider from "@/components/providers/react-query-provider";
+import CartSidebar from "@/components/cart/cartSidebar";
 
 export const metadata: Metadata = {
   title: "Dimar Candles",
@@ -24,6 +25,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <Header />
           {children}
+          <CartSidebar />
         </ReactQueryProvider>
       </body>
     </html>

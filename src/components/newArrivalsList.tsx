@@ -4,6 +4,8 @@ import SectionHeading from "./ui/section-heading";
 import Image from "next/image";
 import { useNewArrivals } from "@/hooks/useNewArrivals";
 import Link from "next/link";
+import { useCartStore } from "@/store/cartStore";
+import { Item } from "@/constants";
 
 function NewArrivalsList() {
   const {
@@ -16,6 +18,16 @@ function NewArrivalsList() {
 
   const errorMessage = errorObj instanceof Error ? errorObj.message : null;
   console.log(items);
+
+  const addItem = useCartStore((state) => state.addItem);
+  const openCart = useCartStore((state) => state.openCart);
+
+  const handleAddToCart = (item: Item) => {
+    if (item) {
+      addItem(item);
+      openCart();
+    }
+  };
 
   return (
     <section className="max-w-6xl mx-auto px-6">
@@ -47,36 +59,37 @@ function NewArrivalsList() {
             // Create slug with ID at the end for product page routing
             const fullSlug = `${item.slug}-${item.id}`;
             return (
-              <Link
-                key={item.id}
-                href={`/product/${fullSlug}`}
-                prefetch
+              <div
                 className="relative group border border-neutral-300 rounded-xl p-3 bg-white shadow hover:shadow-md transition"
+                key={item.id}
               >
-                <div className="relative w-full h-50 mb-3 overflow-hidden rounded-lg bg-neutral-100">
-                  {item.imageUrl ? (
-                    <Image
-                      src={item.imageUrl[0]}
-                      alt={item.name}
-                      fill
-                      sizes="(max-width:768px) 50vw, 25vw"
-                      className="object-cover group-hover:scale-110 transition duration-300"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full text-xs text-neutral-500">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <h3
-                  className="text-sm font-bold line-clamp-1"
-                  title={item.name}
-                >
-                  {item.name}
-                </h3>
-                <h4 className="text-sm text-black/70 line-clamp-2">
-                  {item.description}
-                </h4>
+                <Link href={`/product/${fullSlug}`} prefetch>
+                  <div className="relative w-full h-50 mb-3 overflow-hidden rounded-lg bg-neutral-100">
+                    {item.imageUrl ? (
+                      <Image
+                        src={item.imageUrl[0]}
+                        alt={item.name}
+                        fill
+                        sizes="(max-width:768px) 50vw, 25vw"
+                        className="object-cover group-hover:scale-110 transition duration-300"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full text-xs text-neutral-500">
+                        No Image
+                      </div>
+                    )}
+                  </div>
+                  <h3
+                    className="text-sm font-bold line-clamp-1"
+                    title={item.name}
+                  >
+                    {item.name}
+                  </h3>
+                  <h4 className="text-sm text-black/70 line-clamp-2">
+                    {item.description}
+                  </h4>
+                </Link>
+
                 {typeof item.price === "number" && (
                   <p className="font-semibold mt-1 text-sm">
                     ${item.price.toFixed(2)}
@@ -84,7 +97,12 @@ function NewArrivalsList() {
                 )}
                 <div className="mt-2 text-center">
                   {item.inStock ? (
-                    <button className="buy-button mt-2">Add to Cart</button>
+                    <button
+                      className="buy-button mt-2"
+                      onClick={() => handleAddToCart(item)}
+                    >
+                      Add to Cart
+                    </button>
                   ) : (
                     <button
                       className="border-1 py-2 px-8 mt-2 opacity-50"
@@ -94,7 +112,7 @@ function NewArrivalsList() {
                     </button>
                   )}
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

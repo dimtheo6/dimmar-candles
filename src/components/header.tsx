@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { courgette } from "@/lib/fonts";
 import Link from "next/link";
+import CartButton from "./cart/cartButton";
 
 function Header() {
   return (
@@ -54,13 +55,8 @@ function Header() {
             </Link>
           </nav>
 
-          {/* Cart */}
-          <button className="p-2 hover:bg-neutral-50 rounded-full transition-colors group">
-            <FontAwesomeIcon
-              icon={faCartShopping}
-              className="w-5 h-5 text-neutral-600 group-hover:text-neutral-900 transition-colors"
-            />
-          </button>
+            <CartButton />
+   
         </div>
       </div>
     </header>
