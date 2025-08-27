@@ -1,0 +1,70 @@
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { courgette } from "@/lib/fonts";
+import Link from "next/link";
+
+function Header() {
+  return (
+    <header className=" bg-white border-b border-neutral-100 sticky top-0 z-50">
+      {/* Top announcement bar */}
+      <div className="bg-neutral-50 text-center py-2">
+        <p className="text-xs text-neutral-600 tracking-wide">
+          Free shipping above $100 or $9 flat rate
+        </p>
+      </div>
+
+      {/* Main header */}
+      <div className=" max-w-6xl mx-auto px-6">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <Link href={"/"} className="group">
+            <h1
+              className={`${courgette.className} text-2xl text-neutral-900 group-hover:text-neutral-600 transition-colors`}
+            >
+              Dimmar
+            </h1>
+          </Link>
+
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center space-x-12">
+            <Link
+              href={"/"}
+              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href={"/products"}
+              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              Products
+            </Link>
+            <Link
+              href={"/about"}
+              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              href={"/contact"}
+              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              Contact
+            </Link>
+          </nav>
+
+          {/* Cart */}
+          <button className="p-2 hover:bg-neutral-50 rounded-full transition-colors group">
+            <FontAwesomeIcon
+              icon={faCartShopping}
+              className="w-5 h-5 text-neutral-600 group-hover:text-neutral-900 transition-colors"
+            />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export default Header;
