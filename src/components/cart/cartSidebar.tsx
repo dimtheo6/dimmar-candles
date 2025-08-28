@@ -125,9 +125,11 @@ export default function CartSidebar() {
               <span className="font-medium">Total:</span>
               <span className="font-bold">${totalPrice.toFixed(2)}</span>
             </div>
-            <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-neutral-800 transition-colors cursor-pointer">
+            <Link href={'/checkout'}>
+            <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-neutral-800 transition-colors cursor-pointer" onClick={closeCart}>
               Checkout
             </button>
+            </Link>
           </div>
         )}
       </div>
