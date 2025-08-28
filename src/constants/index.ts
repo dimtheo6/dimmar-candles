@@ -1,3 +1,5 @@
+import { useCartStore } from "@/store/cartStore";
+
 export const navLists = ["Store", "Mac", "iPhone", "Support"];
 
 export type Category = {
@@ -33,6 +35,7 @@ export function generateSlug(name: string): string {
     .replace(/[\s]+/g, "-") // spaces → hyphens
     .replace(/[^\w-]+/g, ""); // remove special chars
 }
+
 
 export const categories: Category[] = [
   {

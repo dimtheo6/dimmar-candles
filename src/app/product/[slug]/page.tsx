@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Loading from "./loading";
 import "@splidejs/react-splide/css";
+import { useCartStore } from "@/store/cartStore";
 
 function extractIdFromSlug(slug: string): string {
   const parts = slug.split("-");
@@ -38,6 +39,16 @@ async function fetchProduct(id: string): Promise<Item> {
 function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = React.use(params);
   const productId = extractIdFromSlug(slug);
+
+  const addItem = useCartStore((state) => state.addItem);
+  const openCart = useCartStore((state) => state.openCart);
+
+  const handleAddToCart = (item: Item) => {
+    if (item) {
+      addItem(item);
+      openCart();
+    }
+  };
 
   const {
     data: product,
@@ -174,6 +185,7 @@ function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
                     ? "bg-neutral-900 text-white hover:bg-neutral-800 active:scale-95 cursor-pointer"
                     : "bg-neutral-50 text-neutral-500 border-2 border-neutral-200 cursor-not-allowed relative overflow-hidden"
                 }`}
+                onClick={() => handleAddToCart(product)}
               >
                 {product.inStock ? (
                   "Add to Cart"
@@ -184,7 +196,6 @@ function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
                 )}
               </button>
             </div>
-            
 
             {/* Product Details */}
             <div className="pt-8 border-t border-neutral-100">
