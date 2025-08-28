@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
+import OrderNumber from "./orderNumber";
 
 export default function CheckoutSuccessPage() {
   return (
@@ -42,9 +41,7 @@ export default function CheckoutSuccessPage() {
         {/* Order Number */}
         <div className="bg-white rounded-lg p-4 mb-8 border border-neutral-200">
           <p className="text-sm text-neutral-600 mb-1">Order Number</p>
-          <p className="font-medium text-neutral-900">
-            #DIM-{Date.now().toString().slice(-8)}
-          </p>
+          <OrderNumber />
         </div>
 
         {/* Actions */}

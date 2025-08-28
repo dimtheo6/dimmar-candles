@@ -185,7 +185,6 @@ export default function CheckoutPage() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      autoComplete="email"
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                         errors.email ? "border-red-300" : "border-neutral-300"
                       }`}
@@ -204,7 +203,6 @@ export default function CheckoutPage() {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        autoComplete="given-name"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                           errors.firstName ? "border-red-300" : "border-neutral-300"
                         }`}
@@ -222,7 +220,6 @@ export default function CheckoutPage() {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        autoComplete="family-name"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                           errors.lastName ? "border-red-300" : "border-neutral-300"
                         }`}
@@ -241,7 +238,6 @@ export default function CheckoutPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      autoComplete="tel"
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                         errors.phone ? "border-red-300" : "border-neutral-300"
                       }`}
@@ -265,7 +261,6 @@ export default function CheckoutPage() {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      autoComplete="street-address"
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                         errors.address ? "border-red-300" : "border-neutral-300"
                       }`}
@@ -283,7 +278,6 @@ export default function CheckoutPage() {
                       name="apartment"
                       value={formData.apartment}
                       onChange={handleInputChange}
-                      autoComplete="address-line2"
                       className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors"
                       placeholder="Apt 2B"
                     />
@@ -299,7 +293,6 @@ export default function CheckoutPage() {
                         name="city"
                         value={formData.city}
                         onChange={handleInputChange}
-                        autoComplete="address-level2"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                           errors.city ? "border-red-300" : "border-neutral-300"
                         }`}
@@ -317,7 +310,6 @@ export default function CheckoutPage() {
                         name="state"
                         value={formData.state}
                         onChange={handleInputChange}
-                        autoComplete="address-level1"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                           errors.state ? "border-red-300" : "border-neutral-300"
                         }`}
@@ -336,7 +328,6 @@ export default function CheckoutPage() {
                       name="zipCode"
                       value={formData.zipCode}
                       onChange={handleInputChange}
-                      autoComplete="postal-code"
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                         errors.zipCode ? "border-red-300" : "border-neutral-300"
                       }`}
@@ -360,7 +351,6 @@ export default function CheckoutPage() {
                       name="cardNumber"
                       value={formData.cardNumber}
                       onChange={handleInputChange}
-                      autoComplete="cc-number"
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                         errors.cardNumber ? "border-red-300" : "border-neutral-300"
                       }`}
@@ -380,7 +370,6 @@ export default function CheckoutPage() {
                         name="expiryDate"
                         value={formData.expiryDate}
                         onChange={handleInputChange}
-                        autoComplete="cc-exp"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                           errors.expiryDate ? "border-red-300" : "border-neutral-300"
                         }`}
@@ -399,7 +388,6 @@ export default function CheckoutPage() {
                         name="cvv"
                         value={formData.cvv}
                         onChange={handleInputChange}
-                        autoComplete="cc-csc"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                           errors.cvv ? "border-red-300" : "border-neutral-300"
                         }`}
@@ -419,7 +407,6 @@ export default function CheckoutPage() {
                       name="cardName"
                       value={formData.cardName}
                       onChange={handleInputChange}
-                      autoComplete="cc-name"
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20 transition-colors ${
                         errors.cardName ? "border-red-300" : "border-neutral-300"
                       }`}
