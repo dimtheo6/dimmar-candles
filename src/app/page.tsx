@@ -6,6 +6,7 @@ import Carousel from "@/components/carousel";
 import { categories } from "@/constants";
 import NewArrivals from "@/components/newArrivalsList";
 
+
 export default function Home() {
   return (
     <>
@@ -15,11 +16,11 @@ export default function Home() {
           title: c.text,
           image: c.img,
           subtitle: `Explore our ${c.text.toLowerCase()}`,
-          
         }))}
         autoPlayMs={5000}
-      className="w-full"/>
-      <NewArrivals/>
+        className="w-full"
+      />
+      <NewArrivals />
       <Categories />
       <Afterpay />
     </>
