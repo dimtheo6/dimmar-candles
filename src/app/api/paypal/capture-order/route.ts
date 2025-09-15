@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { saveOrUpdateOrder } from "@/lib/orders";
 
 // Endpoint: POST /api/paypal/capture-order
 // Responsibility:
@@ -53,6 +54,66 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    // Fetch full order details (optional but useful for items & payer email)
+    let orderDetails: unknown = data; // capture response often includes purchase_units; if not, fetch order
+    try {
+      if (!data?.purchase_units) {
+        const orderRes = await fetch(
+          `${PAYPAL_API}/v2/checkout/orders/${orderId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${auth}`,
+            },
+          }
+        );
+        if (orderRes.ok) orderDetails = await orderRes.json();
+      }
+    } catch {
+      // non-fatal
+    }
+
+    interface PurchaseUnitItem {
+      name?: string;
+      quantity?: string | number;
+      unit_amount?: { value?: string };
+    }
+    interface PurchaseUnit {
+      amount?: { value?: string; currency_code?: string };
+      items?: PurchaseUnitItem[];
+    }
+    interface OrderDetailsShape {
+      payer?: { email_address?: string };
+      purchase_units?: PurchaseUnit[];
+    }
+    const od = orderDetails as OrderDetailsShape | undefined;
+    const email = od?.payer?.email_address || "unknown@example.com";
+    const amountValue = od?.purchase_units?.[0]?.amount?.value;
+    const currencyCode =
+      od?.purchase_units?.[0]?.amount?.currency_code || "AUD";
+    const amountTotal = amountValue ? Math.round(Number(amountValue) * 100) : 0;
+    const items = Array.isArray(od?.purchase_units?.[0]?.items)
+      ? od!.purchase_units![0].items!.map((it: PurchaseUnitItem) => ({
+          name: String(it.name || ""),
+          qty: Number(it.quantity || 1),
+          unitAmount: it.unit_amount?.value
+            ? Math.round(Number(it.unit_amount.value) * 100)
+            : 0,
+        }))
+      : [];
+
+    await saveOrUpdateOrder({
+      provider: "paypal",
+      providerOrderId: orderId,
+      amountTotal,
+      currency: currencyCode.toLowerCase(),
+      status: data.status === "COMPLETED" ? "paid" : "pending",
+      customer: { email },
+      items,
+      raw: data,
+    });
 
     return NextResponse.json({ id: data.id, status: data.status });
   } catch (err) {

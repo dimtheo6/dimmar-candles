@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# AI agents
+AGENTS.md
+
 # production
 /build
 
