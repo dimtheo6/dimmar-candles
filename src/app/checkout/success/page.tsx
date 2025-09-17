@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import OrderNumber from "./orderNumber";
 
@@ -41,7 +41,13 @@ export default function CheckoutSuccessPage() {
         {/* Order Number */}
         <div className="bg-white rounded-lg p-4 mb-8 border border-neutral-200">
           <p className="text-sm text-neutral-600 mb-1">Order Number</p>
-          <OrderNumber />
+          <Suspense
+            fallback={
+              <p className="font-medium text-neutral-500">Loading...</p>
+            }
+          >
+            <OrderNumber />
+          </Suspense>
         </div>
 
         {/* Actions */}

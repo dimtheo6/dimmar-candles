@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { saveOrUpdateOrder } from "@/lib/orders";
+import type { OrderItem } from "@/lib/orders";
 
 // Endpoint: POST /api/paypal/capture-order
 // Responsibility:
@@ -80,21 +81,47 @@ export async function POST(req: Request) {
       quantity?: string | number;
       unit_amount?: { value?: string };
     }
+    interface CaptureAmount {
+      value?: string;
+      currency_code?: string;
+    }
+    interface Capture {
+      amount?: CaptureAmount;
+    }
+    interface Payments {
+      captures?: Capture[];
+    }
     interface PurchaseUnit {
       amount?: { value?: string; currency_code?: string };
       items?: PurchaseUnitItem[];
+      payments?: Payments;
     }
     interface OrderDetailsShape {
       payer?: { email_address?: string };
       purchase_units?: PurchaseUnit[];
     }
     const od = orderDetails as OrderDetailsShape | undefined;
+
     const email = od?.payer?.email_address || "unknown@example.com";
-    const amountValue = od?.purchase_units?.[0]?.amount?.value;
-    const currencyCode =
-      od?.purchase_units?.[0]?.amount?.currency_code || "AUD";
-    const amountTotal = amountValue ? Math.round(Number(amountValue) * 100) : 0;
-    const items = Array.isArray(od?.purchase_units?.[0]?.items)
+
+    // Prefer captured amount from the capture payload
+    const d = data as { purchase_units?: PurchaseUnit[]; status?: string };
+    const capAmt = d.purchase_units?.[0]?.payments?.captures?.[0]?.amount;
+    const capturedValue = capAmt?.value;
+    const capturedCurrency = capAmt?.currency_code;
+
+    // Fallback to order amount if capture amount missing
+    const puAmountValue = od?.purchase_units?.[0]?.amount?.value;
+    const puCurrency = od?.purchase_units?.[0]?.amount?.currency_code;
+
+    let currencyCode = (capturedCurrency || puCurrency || "AUD").toUpperCase();
+    let amountTotal = 0;
+    const pickValue = capturedValue ?? puAmountValue;
+    if (pickValue && !Number.isNaN(Number(pickValue))) {
+      amountTotal = Math.round(Number(pickValue) * 100);
+    }
+
+    let items: OrderItem[] = Array.isArray(od?.purchase_units?.[0]?.items)
       ? od!.purchase_units![0].items!.map((it: PurchaseUnitItem) => ({
           name: String(it.name || ""),
           qty: Number(it.quantity || 1),
@@ -103,6 +130,38 @@ export async function POST(req: Request) {
             : 0,
         }))
       : [];
+
+    // If amount or items still missing, try to reuse the pending order saved at create time
+    if (amountTotal <= 0 || items.length === 0) {
+      try {
+        const { db } = await import("@/lib/firebase");
+        const { doc, getDoc } = await import("firebase/firestore");
+        const ref = doc(db, "orders", `paypal_${orderId}`);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const existing = snap.data() as {
+            amountTotal?: number;
+            currency?: string;
+            items?: OrderItem[];
+          };
+          if (
+            amountTotal <= 0 &&
+            typeof existing.amountTotal === "number" &&
+            existing.amountTotal > 0
+          ) {
+            amountTotal = existing.amountTotal;
+          }
+          if (!currencyCode && typeof existing.currency === "string") {
+            currencyCode = existing.currency.toUpperCase();
+          }
+          if (items.length === 0 && Array.isArray(existing.items)) {
+            items = existing.items as OrderItem[];
+          }
+        }
+      } catch (e) {
+        console.warn("[paypal] fallback read of pending order failed", e);
+      }
+    }
 
     await saveOrUpdateOrder({
       provider: "paypal",

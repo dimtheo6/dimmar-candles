@@ -1,18 +1,16 @@
 // src/app/checkout/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useCartStore } from "@/store/cartStore";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Elements,
-  useStripe,
-  useElements,
-  PaymentElement,
-} from "@stripe/react-stripe-js";
+import { Elements, PaymentElement } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { PayPalButtons } from "@/components/PayPalButtons"; // Lazy PayPal wallet (no cards) component
+import { computeTotals } from "@/utils/checkoutTotals";
+import { usePaymentIntent } from "@/hooks/usePaymentIntent";
+import { useStripeConfirm } from "@/hooks/useStripeConfirm";
 
 // Stripe instance (loaded once on the client) – shared by Elements provider
 const stripePromise = loadStripe(
@@ -35,8 +33,22 @@ interface CheckoutFormValues {
 
 function CheckoutForm() {
   const { items, totalPrice, clearCart } = useCartStore();
-  const stripe = useStripe();
-  const elements = useElements();
+  const { total } = computeTotals(totalPrice);
+  const {
+    clientSecret,
+    loading: piLoading,
+    error: piError,
+  } = usePaymentIntent({
+    totalAud: total,
+    email: undefined, // set after form input below when creating PI at page level
+    items: items.map((it) => ({
+      id: it.id,
+      name: it.name,
+      quantity: it.quantity,
+      price: it.price,
+    })),
+  });
+  const { confirm, submitting, error: confirmError } = useStripeConfirm();
   // Local payment method toggle – drives conditional rendering of Stripe PaymentElement vs PayPal
   const [selectedPayment, setSelectedPayment] = useState<"card" | "paypal">(
     "card"
@@ -55,12 +67,7 @@ function CheckoutForm() {
     country: "Australia",
   });
   const [errors, setErrors] = useState<Partial<CheckoutFormValues>>({});
-  // Derive pricing only after cart store populated.
-  const subtotal = totalPrice;
-  // Avoid charging shipping when cart is still empty/hydrating.
-  const shipping = subtotal === 0 ? 0 : subtotal > 100 ? 0 : 9;
-  const tax = subtotal * 0.1;
-  const total = subtotal + shipping + tax;
+  // clientSecret is managed by usePaymentIntent; Elements provider above handles creation at page level
 
   if (items.length === 0) {
     return <div className="text-center py-20">Cart empty</div>;
@@ -88,36 +95,26 @@ function CheckoutForm() {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Only runs for Stripe path. When PayPal is used the Smart Buttons perform their own create + capture.
-    if (!validateForm() || !stripe || !elements) return;
+    if (!validateForm()) return;
     setIsSubmitting(true);
-    try {
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          // Stripe will redirect back here (3DS etc.) after confirmation
-          return_url: `${window.location.origin}/checkout/success`,
-          receipt_email: formData.email,
-          shipping: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            address: {
-              line1: formData.address,
-              line2: formData.apartment || undefined,
-              city: formData.city,
-              state: formData.state,
-              postal_code: formData.zipCode,
-              country: "AU",
-            },
-          },
+    const res = await confirm({
+      email: formData.email,
+      returnUrl: `${window.location.origin}/checkout/success`,
+      shipping: {
+        name: `${formData.firstName} ${formData.lastName}`,
+        address: {
+          line1: formData.address,
+          line2: formData.apartment || undefined,
+          city: formData.city,
+          state: formData.state,
+          postal_code: formData.zipCode,
+          country: "AU",
         },
-      });
-      if (error) alert(error.message);
-      else clearCart();
-    } catch {
-      alert("Unexpected error");
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+    });
+    if (!res.ok) alert(res.error || "Payment failed");
+    else clearCart();
+    setIsSubmitting(false);
   };
   return (
     <div className="bg-white rounded-2xl p-8 shadow-sm">
@@ -349,15 +346,20 @@ function CheckoutForm() {
         </section>
         <button
           type="submit"
-          disabled={isSubmitting || !stripe}
+          disabled={isSubmitting || submitting || piLoading || !clientSecret}
           className={`w-full py-4 px-6 rounded-lg font-medium text-white ${
-            isSubmitting || !stripe
+            isSubmitting || submitting || piLoading || !clientSecret
               ? "bg-neutral-400 cursor-not-allowed"
               : "bg-black hover:bg-neutral-800"
           }`}
         >
-          {isSubmitting ? "Processing..." : `Pay A$${total.toFixed(2)}`}
+          {isSubmitting || submitting || piLoading
+            ? "Processing..."
+            : `Pay A$${total.toFixed(2)}`}
         </button>
+        {(piError || confirmError) && (
+          <p className="text-xs text-red-600 mt-2">{piError || confirmError}</p>
+        )}
       </form>
     </div>
   );
@@ -368,49 +370,21 @@ function CheckoutForm() {
 
 export default function CheckoutPage() {
   const { items, totalPrice } = useCartStore();
-  const [clientSecret, setClientSecret] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  // Calculate totals
-  const subtotal = totalPrice;
-  const shipping = subtotal > 100 ? 0 : 9;
-  const tax = subtotal * 0.1;
-  const total = subtotal + shipping + tax;
-
-  // Create payment intent when component mounts
-  useEffect(() => {
-    // Only attempt to create a PaymentIntent when subtotal fully known and > 0.
-    if (subtotal <= 0) {
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    fetch("/api/create-payment-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: Math.round(total * 100),
-        currency: "aud",
-      }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const errorData = await res.text();
-          throw new Error(`HTTP ${res.status}: ${errorData}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data.error) throw new Error(data.error);
-        setClientSecret(data.clientSecret);
-      })
-      .catch((error) => {
-        console.error("Error creating payment intent:", error);
-        setError("Failed to initialize payment. Please try again.");
-      })
-      .finally(() => setIsLoading(false));
-  }, [subtotal, total]);
+  const totals = computeTotals(totalPrice);
+  const { subtotal, shipping, tax, total } = totals;
+  const {
+    clientSecret,
+    loading: isLoading,
+    error,
+  } = usePaymentIntent({
+    totalAud: total,
+    items: items.map((it) => ({
+      id: it.id,
+      name: it.name,
+      quantity: it.quantity,
+      price: it.price,
+    })),
+  });
 
   // Show loading state
   if (isLoading) {

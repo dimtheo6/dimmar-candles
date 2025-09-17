@@ -3,6 +3,10 @@
 
 import { db } from "./firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import { Resend } from "resend";
+import { EmailTemplate } from "@/components/emailTemplate";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export interface OrderItem {
   productId?: string;
@@ -13,6 +17,7 @@ export interface OrderItem {
 
 export interface OrderRecord {
   id: string;
+  displayId: string; // User-friendly order number like DIM-12345678
   provider: "stripe" | "paypal";
   providerIntentId?: string;
   providerOrderId?: string;
@@ -61,24 +66,50 @@ export async function saveOrUpdateOrder(p: SaveParams): Promise<string> {
   const existing = await getDoc(ref);
   const base: Partial<OrderRecord> = existing.exists() ? existing.data() : {};
   const now = Date.now();
-  await setDoc(ref, {
+
+  const order: OrderRecord = {
     ...base,
     ...p,
     id: key,
+    displayId: base.displayId || `DIM-${now.toString().slice(-8)}`,
     createdAt: base.createdAt || now,
     updatedAt: now,
-  });
+  };
+  console.log("[orders] upserting", order);
+
+  await setDoc(ref, order);
+
+  // Fire off confirmation email if order is "paid"
+  if (order.status === "paid") {
+    await sendOrderConfirmationEmail(order);
+  }
+
   return key;
 }
 
-// Simple email sender stub. Implement with real provider (Nodemailer / Resend / SendGrid)
+// Simple email sender with Resend
 export async function sendOrderConfirmationEmail(order: OrderRecord) {
   if (!process.env.ORDER_EMAIL_FROM) return;
-  // Placeholder: integrate real mail transport later
-  console.info(
-    "[email] would send confirmation to",
-    order.customer.email,
-    "for",
-    order.id
-  );
+
+  try {
+    // Send email
+    const { data, error } = await resend.emails.send({
+      from: process.env.ORDER_EMAIL_FROM, // e.g. "Store <orders@yourdomain.com>"
+      to: [order.customer.email],
+      subject: `Order Confirmation - ${order.id}`,
+      react: EmailTemplate({
+        firstName: order.customer.name || "Customer",
+        order: order,
+      }),
+    });
+
+    if (error) {
+      console.error("Failed to send confirmation email:", error);
+      return;
+    }
+
+    console.info("Confirmation email sent:", data);
+  } catch (err) {
+    console.error("Error sending email:", err);
+  }
 }
