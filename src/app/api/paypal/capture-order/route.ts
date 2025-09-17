@@ -104,6 +104,41 @@ export async function POST(req: Request) {
 
     const email = od?.payer?.email_address || "unknown@example.com";
 
+    // Extract customer name from PayPal response
+    // Priority: shipping.name.full_name -> payer.name (given + surname) -> fallback
+    interface PayPalCapturePayerName {
+      given_name?: string;
+      surname?: string;
+    }
+    interface PayPalCapturePayer {
+      name?: PayPalCapturePayerName;
+    }
+    interface PayPalCaptureShippingName {
+      full_name?: string;
+    }
+    interface PayPalCaptureShipping {
+      name?: PayPalCaptureShippingName;
+    }
+    interface PayPalCapturePurchaseUnit {
+      shipping?: PayPalCaptureShipping;
+    }
+    interface PayPalCaptureShape {
+      payer?: PayPalCapturePayer;
+      purchase_units?: PayPalCapturePurchaseUnit[];
+    }
+    const cap = data as PayPalCaptureShape;
+
+    let customerName: string | undefined;
+    const shippingName = cap.purchase_units?.[0]?.shipping?.name?.full_name;
+    if (shippingName) customerName = shippingName.trim();
+
+    if (!customerName) {
+      const given = cap.payer?.name?.given_name;
+      const surname = cap.payer?.name?.surname;
+      const combo = [given, surname].filter(Boolean).join(" ").trim();
+      if (combo) customerName = combo;
+    }
+
     // Prefer captured amount from the capture payload
     const d = data as { purchase_units?: PurchaseUnit[]; status?: string };
     const capAmt = d.purchase_units?.[0]?.payments?.captures?.[0]?.amount;
@@ -169,7 +204,7 @@ export async function POST(req: Request) {
       amountTotal,
       currency: currencyCode.toLowerCase(),
       status: data.status === "COMPLETED" ? "paid" : "pending",
-      customer: { email },
+      customer: { email, name: customerName },
       items,
       raw: data,
     });

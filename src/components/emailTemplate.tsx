@@ -113,7 +113,7 @@ export function EmailTemplate({ firstName, order }: EmailTemplateProps) {
                           color: text,
                         }}
                       >
-                        {order.id}
+                        {order.displayId}
                       </p>
                     </td>
                     <td
