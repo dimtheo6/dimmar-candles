@@ -7,7 +7,7 @@ import CartButton from "./cart/cartButton";
 
 function Header() {
   return (
-    <header className=" bg-white border-b border-neutral-100 sticky top-0 z-30">
+    <header className=" bg-white border-b border-neutral-100 sticky top-0 z-30 select-none">
       {/* Top announcement bar */}
       <div className="bg-neutral-50 text-center py-2">
         <p className="text-xs text-neutral-600 tracking-wide">
@@ -48,7 +48,7 @@ function Header() {
               About
             </Link>
             <Link
-              href={"/contact"}
+              href={"/contact-us"}
               className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               Contact

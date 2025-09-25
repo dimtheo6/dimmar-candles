@@ -9,13 +9,18 @@ interface ProductGridProps {
   items: Item[];
   isLoading: boolean;
   error?: string | null;
+  filteredItems?: Item[];
 }
 
 export default function ProductGrid({
   items,
   isLoading,
   error,
+  filteredItems,
 }: ProductGridProps) {
+
+  const displayItems = filteredItems || items;
+
   if (isLoading) {
     return (
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -47,7 +52,7 @@ export default function ProductGrid({
     );
   }
 
-  if (items.length === 0) {
+  if (displayItems.length === 0) {
     return (
       <div className="text-center py-16">
         <div className="text-6xl mb-4">🕯️</div>
@@ -60,10 +65,11 @@ export default function ProductGrid({
       </div>
     );
   }
-
+console.log('Rendering item:', displayItems);
   return (
     <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {items.map((item) => {
+      
+      {displayItems.map((item) => {   
         const fullSlug = `${item.slug}-${item.id}`;
         return (
           <Link key={item.id} href={`/product/${fullSlug}`} className="group">

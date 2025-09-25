@@ -96,7 +96,7 @@ export async function sendOrderConfirmationEmail(order: OrderRecord) {
     const { data, error } = await resend.emails.send({
       from: process.env.ORDER_EMAIL_FROM, // e.g. "Store <orders@yourdomain.com>"
       to: [order.customer.email],
-      subject: `Order Confirmation - ${order.id}`,
+      subject: `Order Confirmation - ${order.displayId}`,
       react: EmailTemplate({
         firstName: order.customer.name || "Customer",
         order: order,

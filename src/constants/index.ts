@@ -1,7 +1,4 @@
-import { useCartStore } from "@/store/cartStore";
-
-export const navLists = ["Store", "Mac", "iPhone", "Support"];
-
+// src/constants/index.ts
 export type Category = {
   id: number;
   text: string;
@@ -36,6 +33,14 @@ export function generateSlug(name: string): string {
     .replace(/[^\w-]+/g, ""); // remove special chars
 }
 
+export const scents: string[] = [
+  "floral",
+  "citrus",
+  "woody",
+  "spicy",
+  "fresh",
+  "fruity",
+];
 
 export const categories: Category[] = [
   {
