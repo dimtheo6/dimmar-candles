@@ -36,7 +36,7 @@ export default function ContactForm() {
     <section className="bg-white py-12 px-6">
       <div className="max-w-lg mx-auto">
         <div className="mb-8 text-md space-y-6">
-          <h3>
+          <h3 className=" leading-relaxed text-neutral-600">
             Want to get in touch ? You can chat with us by email, or send your
             request via our form. We're available from 10am - 5pm AEST Monday -
             Friday.{" "}

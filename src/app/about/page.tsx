@@ -2,7 +2,7 @@ import React from "react";
 
 function page() {
   return (
-    <div className="max-w-xl mx-auto px-6 py-10 space-y-6 leading-relaxed ">
+    <div className="max-w-lg mx-auto px-6 py-10 space-y-6 leading-relaxed text-md [&>div]:text-neutral-600  ">
       <h1 className="text-2xl font-bold text-center">About Us</h1>
       <div>
         Dimmar is an online marketplace where you can find Australia’s best

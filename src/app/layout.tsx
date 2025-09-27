@@ -5,9 +5,10 @@ config.autoAddCss = false; // PREVENT DUPLICATE INJECTION
 import type { Metadata } from "next";
 import "./globals.css";
 import { bodyFontVars } from "@/lib/fonts";
-import Header from "@/components/header"; // adjust path if different
+import Header from "@/components/header";
 import ReactQueryProvider from "@/components/providers/react-query-provider";
 import CartSidebar from "@/components/cart/cartSidebar";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "Dimar Candles",
@@ -26,6 +27,7 @@ export default function RootLayout({
           <Header />
           {children}
           <CartSidebar />
+          <Footer />
         </ReactQueryProvider>
       </body>
     </html>
