@@ -2,7 +2,6 @@ import React from "react";
 import { categories } from "@/constants";
 import Link from "next/link";
 import Image from "next/image";
-import SectionHeading from "@/components/ui/section-heading";
 
 export default function Categories() {
   return (

@@ -38,7 +38,7 @@ export default function ContactForm() {
         <div className="mb-8 text-md space-y-6">
           <h3 className=" leading-relaxed text-neutral-600">
             Want to get in touch ? You can chat with us by email, or send your
-            request via our form. We're available from 10am - 5pm AEST Monday -
+            request via our form. We&apos;re available from 10am - 5pm AEST Monday -
             Friday.{" "}
           </h3>
           <h1 className="font-bold">support@dimmar.com</h1>

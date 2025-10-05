@@ -41,10 +41,10 @@ export default function Carousel({
     [count]
   );
 
-  const goTo = useCallback(
-    (i: number) => setIndex(((i % count) + count) % count),
-    [count]
-  );
+  // const goTo = useCallback(
+  //   (i: number) => setIndex(((i % count) + count) % count),
+  //   [count]
+  // );
 
   // Autoplay
   useEffect(() => {
