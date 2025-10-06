@@ -5,17 +5,18 @@ import Categories from "@/components/categories";
 import Carousel from "@/components/carousel";
 import { categories } from "@/constants";
 import NewArrivals from "@/components/newArrivalsList";
+import { carouselItems } from "@/constants";
 
 
 export default function Home() {
   return (
     <>
       <Carousel
-        items={categories.map((c) => ({
+        items={carouselItems.map((c) => ({
           id: c.id,
-          title: c.text,
-          image: c.img,
-          subtitle: `Explore our ${c.text.toLowerCase()}`,
+          title: c.title,
+          image: c.imageUrl,
+          subtitle: `Explore our ${c.title.toLowerCase()}`,
         }))}
         autoPlayMs={5000}
         className="w-full"

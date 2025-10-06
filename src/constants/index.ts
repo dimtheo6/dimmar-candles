@@ -47,25 +47,49 @@ export const categories: Category[] = [
     id: 1,
     text: "Homewares",
     url: "/homewares",
-    img: "/images/candle.jpg",
+    img: "/images/homewares.webp",
   },
   {
     id: 2,
     text: "Candles",
     url: "/candles",
-    img: "/images/candle.jpg",
+    img: "/images/carousel_candle2.jpg",
   },
   {
     id: 3,
     text: "Diffusers",
     url: "/diffusers",
-    img: "/images/candle.jpg",
+    img: "/images/diffusers.webp",
   },
   {
     id: 4,
     text: "New Arrivals",
-    url: "/diffusers",
-    img: "/images/candle.jpg",
+    url: "/candles",
+    img: "/images/newArrivals.webp",
+  },
+];
+
+export const carouselItems = [
+  {
+    id: "1",
+    imageUrl: "/images/carousel_candle.jpg",
+    alt: "Carousel Image 1",
+    title: "Elegant Scented Candles",
+    description: "Transform your space with our premium candles.",
+  },
+    {
+    id: "2",
+    imageUrl: "/images/carousel_candle2.jpg",
+    alt: "Carousel Image 2",
+    title: "Elegant Scented Candles",
+    description: "Transform your space with our premium candles.",
+  },
+    {
+    id: "3",
+    imageUrl: "/images/carousel_candle3.jpg",
+    alt: "Carousel Image 3",
+    title: "Elegant Scented Candles",
+    description: "Transform your space with our premium candles.",
   },
 ];
 
