@@ -16,24 +16,31 @@ function extractIdFromSlug(slug: string): string {
 }
 
 async function fetchProduct(id: string): Promise<Item> {
-  const docRef = doc(db, "candles", id);
-  const snapshot = await getDoc(docRef);
+  const collections = ["candles", "diffusers", "homewares"];
 
-  if (!snapshot.exists()) {
-    throw new Error("Product not found");
+  // Try to find the product in each collection
+  for (const collectionName of collections) {
+    const docRef = doc(db, collectionName, id);
+    const snapshot = await getDoc(docRef);
+
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      return {
+        id: snapshot.id,
+        name: data.name,
+        price: data.price,
+        imageUrl: data.imageUrl,
+        inStock: data.inStock,
+        description: data.description,
+        type: data.type || collectionName, // Use type field or fallback to collection name
+        slug: data.slug || "", // Add slug field
+        createdAt: data.createdAt?.toDate(),
+        ...data, // Include any additional fields
+      } as Item;
+    }
   }
 
-  const data = snapshot.data();
-  return {
-    id: snapshot.id,
-    name: data.name,
-    price: data.price,
-    imageUrl: data.imageUrl,
-    inStock: data.inStock,
-    description: data.description,
-    createdAt: data.createdAt?.toDate(),
-    ...data, // Include any additional fields
-  } as Item;
+  throw new Error("Product not found");
 }
 
 function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -107,6 +114,13 @@ function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
         <div className="flex items-center gap-2 text-sm text-neutral-400">
           <Link href="/" className="hover:text-neutral-600 transition-colors">
             Home
+          </Link>
+          <span>/</span>
+          <Link
+            href={`/${product.type}`}
+            className="hover:text-neutral-600 transition-colors capitalize"
+          >
+            {product.type}
           </Link>
           <span>/</span>
           <span className="text-neutral-600">{product.name}</span>
@@ -206,7 +220,7 @@ function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
                 <div className="flex justify-between items-center">
                   <dt className="text-sm text-neutral-500">Category</dt>
                   <dd className="text-sm font-medium text-neutral-900 capitalize">
-                    {product.category || "Candles"}
+                    {product.type || product.category || "Candles"}
                   </dd>
                 </div>
 

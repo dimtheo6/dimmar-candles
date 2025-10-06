@@ -15,6 +15,7 @@ export interface Item {
   description?: string;
   slug: string;
   createdAt: Date; // Firestore Timestamp converted to JS Date
+  type?: string; // Collection type: candles, diffusers, homewares
   category?: string;
   weight?: string;
   burnTime?: string;
@@ -77,14 +78,14 @@ export const carouselItems = [
     title: "Elegant Scented Candles",
     description: "Transform your space with our premium candles.",
   },
-    {
+  {
     id: "2",
     imageUrl: "/images/carousel_candle2.jpg",
     alt: "Carousel Image 2",
     title: "Elegant Scented Candles",
     description: "Transform your space with our premium candles.",
   },
-    {
+  {
     id: "3",
     imageUrl: "/images/carousel_candle3.jpg",
     alt: "Carousel Image 3",
