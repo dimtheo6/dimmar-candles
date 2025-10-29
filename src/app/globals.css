@@ -35,7 +35,7 @@ body {
   }
 
   .buy-button {
-    @apply border-1 py-2 px-8 cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-300 hover:text-white hover:bg-black;
+    @apply border-1 py-2 px-5 sm:py-2 sm:px-8 cursor-pointer group-hover:opacity-100 transition-all duration-300 hover:text-white hover:bg-black;
   }
 
 }

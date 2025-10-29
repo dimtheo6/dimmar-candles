@@ -11,40 +11,64 @@ import Image from "next/image";
 function Footer() {
   return (
     <div className="bg-neutral-100 border-t border-neutral-200 mt-20 p-10">
-      <div className="flex flex-col gap-3">
-        <h3 className="text-lg font-bold">Help & Support</h3>
-        <ul className="font-medium text-neutral-600 [&>li>a]:hover:text-black [&>li]:hover:transition-colors">
-          <li>
-            <Link href="/faq">FAQ</Link>
-          </li>
-          <li>
-            <Link href="/contact-us">Contact Us</Link>
-          </li>
-          <li>
-            <Link href="/shipping-returns">Shipping & Returns</Link>
-          </li>
-          <li>
-            <Link href="/privacy-policy">Privacy Policy</Link>
-          </li>
-          <li>
-            <Link href="/terms-of-service">Terms of Service</Link>
-          </li>
-          <li>
-            <Link href="/refund">Refunds</Link>
-          </li>
-        </ul>
+      <div className="flex gap-5 sm:justify-evenly sm:flex-row flex-col">
+        <div className="space-y-3">
+          <h3 className="text-lg font-bold">Help & Support</h3>
+          <ul className="font-medium text-neutral-600 [&>li>a]:hover:text-black [&>li]:hover:transition-colors">
+            <li>
+              <Link href="/contact-us">Contact Us</Link>
+            </li>
+            <li>
+              <Link href="/refunds">Refunds</Link>
+            </li>
+            <li>
+              <Link href="/privacy-policy">Privacy Policy</Link>
+            </li>
+            <li>
+              <Link href="/terms-of-service">Terms of Service</Link>
+            </li>
+            <li>
+              <Link href="/refund">Refunds</Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold">Dimmar</h2>
+          <div className="font-medium text-neutral-600">
+            <div className="hover:text-black">
+              <Link href="/about">About</Link>
+            </div>
+            <div>support@dimmar.com</div>
+            <div>XX XXXX XXXX</div>
+            <div>Sun: 10am - 4pm</div>
+            <div>Mon-Sat: 9am - 5pm</div>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-center mt-10 gap-3 ">
         {/* Social Media Links */}
         <div className="flex gap-2 mt-auto text-2xl">
-          <Link href="https://www.instagram.com/" target="blank" className="hover:text-[#da0d9d] transition-colors">
+          <Link
+            href="https://www.instagram.com/"
+            target="blank"
+            className="hover:text-[#da0d9d] transition-colors"
+          >
             <FontAwesomeIcon icon={faInstagram} />
           </Link>
-          <Link href="https://www.linkedin.com/" target="blank" className="hover:text-[#0462c0] transition-colors">
+          <Link
+            href="https://www.linkedin.com/"
+            target="blank"
+            className="hover:text-[#0462c0] transition-colors"
+          >
             <FontAwesomeIcon icon={faLinkedin} />
           </Link>
-          <Link href="https://www.facebook.com/" target="blank" className="hover:text-[#0866ff] transition-colors">
+          <Link
+            href="https://www.facebook.com/"
+            target="blank"
+            className="hover:text-[#0866ff] transition-colors"
+          >
             <FontAwesomeIcon icon={faFacebook} />
           </Link>
         </div>
