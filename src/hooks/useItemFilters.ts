@@ -30,7 +30,7 @@ function useItemFilters(items: Item[]) {
   const filteredItems = useMemo(() => {
     if (!items) return [];
 
-    // Step 1: Apply scent filters (OR logic)
+    // Apply scent filters (OR logic)
     let filtered = items;
 
     const selectedScents = Object.entries(filters.scent)
@@ -44,7 +44,7 @@ function useItemFilters(items: Item[]) {
       );
     }
 
-    // Step 2: Apply sorting to filtered results
+    // Apply sorting to filtered results
     if (filters.sortBy === "price-low-high") {
       filtered = [...filtered].sort((a, b) => a.price - b.price);
     } else if (filters.sortBy === "price-high-low") {

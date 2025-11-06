@@ -9,6 +9,7 @@ import Header from "@/components/header";
 import ReactQueryProvider from "@/components/providers/react-query-provider";
 import CartSidebar from "@/components/cart/cartSidebar";
 import Footer from "@/components/footer";
+import ScrollToTop from "@/utils/scrollToTop";
 
 export const metadata: Metadata = {
   title: "Dimar Candles",
@@ -20,8 +21,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="en">
+      <ScrollToTop />
       <body className={`${bodyFontVars} antialiased`}>
         <ReactQueryProvider>
           <Header />
