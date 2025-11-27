@@ -1,61 +1,62 @@
-import React, { useMemo } from "react";
-import { Item } from "@/constants";
+import { useMemo, useState } from "react";
+import { Item, scents, sortOptions } from "@/constants";
 
+// Type definitions for filtering options
+
+export type SortBy = (typeof sortOptions)[number];
+export type Scents = (typeof scents)[number]; // Auto-generates union type from scents array
+
+// Shape of the filter state object
 interface FilterState {
-  sortBy: string;
-  scent: {
-    floral: boolean;
-    citrus: boolean;
-    woody: boolean;
-    sweet: boolean;
-  };
+  sortBy: SortBy;
+  scents: Scents[]; // Array of selected scent strings
 }
 
+// Props interface for sidebar component that controls filters
 export interface SidebarProps {
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
 }
 
-function useItemFilters(items: Item[]) {
-  const [filters, setFilters] = React.useState<FilterState>({
-    sortBy: "popularity",
-    scent: {
-      floral: false,
-      citrus: false,
-      woody: false,
-      sweet: false,
-    },
+
+function useItemFilters(items: Item[] = []) {
+  // State to track current filter selections
+  const [filters, setFilters] = useState<FilterState>({
+    sortBy: "popularity", // Default sorting method
+    scents: [], // Start with no sce  nt filters applied
   });
 
+  // Memoized filtering and sorting logic - only recalculates when items or filters change
   const filteredItems = useMemo(() => {
-    if (!items) return [];
+    let result = items;
 
-    // Apply scent filters (OR logic)
-    let filtered = items;
-
-    const selectedScents = Object.entries(filters.scent)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([scent, _]) => scent);
-
-    if (selectedScents.length > 0) {
-      filtered = items.filter(
-        (item) =>
-          item.scent !== undefined && selectedScents.includes(item.scent)
+    // STEP 1: Filter by selected scents (if any)
+    // Only show items that match at least one of the selected scents
+    if (filters.scents.length > 0) {
+      result = result.filter(
+        (item) => item.scent && filters.scents.includes(item.scent as Scents)
       );
     }
 
-    // Apply sorting to filtered results
-    if (filters.sortBy === "price-low-high") {
-      filtered = [...filtered].sort((a, b) => a.price - b.price);
-    } else if (filters.sortBy === "price-high-low") {
-      filtered = [...filtered].sort((a, b) => b.price - a.price);
+    // STEP 2: Apply sorting to the filtered results
+    switch (filters.sortBy) {
+      case "price-low-high":
+        // Sort by price ascending (cheapest first)
+        return [...result].sort((a, b) => a.price - b.price);
+      case "price-high-low":
+        // Sort by price descending (most expensive first)
+        return [...result].sort((a, b) => b.price - a.price);
+      default:
+        // "popularity" or any other sortBy - keep original order
+        return result;
     }
-    // For 'popularity' or any other sortBy, preserve original order
-
-    return filtered;
   }, [items, filters]);
 
-  return { filters, setFilters, filteredItems };
+  return {
+    filters,
+    setFilters,
+    filteredItems,
+  };
 }
 
 export default useItemFilters;

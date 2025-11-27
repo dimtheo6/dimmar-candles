@@ -34,6 +34,13 @@ export function generateSlug(name: string): string {
     .replace(/[^\w-]+/g, ""); // remove special chars
 }
 
+
+export const sortOptions: string[] = [
+  "popularity",
+  "price-low-high",
+  "price-high-low",
+];
+
 export const scents: string[] = [
   "floral",
   "citrus",
