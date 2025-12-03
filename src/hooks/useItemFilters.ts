@@ -1,21 +1,23 @@
 import { useMemo, useState } from "react";
-import { Item, scents, sortOptions } from "@/constants";
+import { diffuserScents, Item, candleScents, sortOptions } from "@/constants";
 
 // Type definitions for filtering options
 
 export type SortBy = (typeof sortOptions)[number];
-export type Scents = (typeof scents)[number]; // Auto-generates union type from scents array
+export type CandleScents = (typeof candleScents)[number]; // Auto-generates union type from candleScents array
+export type DiffuserScents = (typeof diffuserScents)[number]; // Auto-generates union type from diffuserScents array
 
 // Shape of the filter state object
 interface FilterState {
   sortBy: SortBy;
-  scents: Scents[]; // Array of selected scent strings
+  scents: (CandleScents | DiffuserScents)[]; // Array of selected scent strings
 }
 
 // Props interface for sidebar component that controls filters
 export interface SidebarProps {
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
+  scents: string[];
 }
 
 
@@ -34,7 +36,7 @@ function useItemFilters(items: Item[] = []) {
     // Only show items that match at least one of the selected scents
     if (filters.scents.length > 0) {
       result = result.filter(
-        (item) => item.scent && filters.scents.includes(item.scent as Scents)
+        (item) => item.scent && filters.scents.includes(item.scent as CandleScents | DiffuserScents)
       );
     }
 

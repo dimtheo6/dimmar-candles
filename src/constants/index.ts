@@ -41,13 +41,19 @@ export const sortOptions: string[] = [
   "price-high-low",
 ];
 
-export const scents: string[] = [
+export const candleScents: string[] = [
   "floral",
   "citrus",
   "woody",
   "spicy",
   "fresh",
   "fruity",
+];
+
+export const diffuserScents: string[] = [
+  "Spice Plum",
+  "citrus",
+  "woody",
 ];
 
 export const categories: Category[] = [

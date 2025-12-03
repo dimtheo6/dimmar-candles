@@ -3,8 +3,9 @@
 import React from "react";
 import { useCategoryItems } from "@/hooks/useCategoryItems";
 import ProductGrid from "@/components/productGrid";
-import Sidebar from "./sidebar";
 import useItemFilters from "@/hooks/useItemFilters";
+import Sidebar from "@/components/sorting/sidebar";
+import { candleScents } from "@/constants";
 
 export default function CandlesPage() {
   const {
@@ -24,7 +25,7 @@ export default function CandlesPage() {
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-20">
           {/* Sidebar */}
-          <Sidebar filters={filters} setFilters={setFilters} />
+          <Sidebar filters={filters} setFilters={setFilters} scents={candleScents}/>
 
           {/* Main Content */}
           <main className="flex-1 min-w-0">
