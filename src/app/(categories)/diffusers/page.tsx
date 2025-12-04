@@ -33,6 +33,9 @@ export default function DiffusersPage() {
               filters={filters}
               setFilters={setFilters}
               scents={diffuserScents}
+              isMobileOpen={isOpen}
+              setIsMobileOpen={setIsOpen}
+              filterCount={displayItems.length}
             />
           ) : (
             <Sidebar

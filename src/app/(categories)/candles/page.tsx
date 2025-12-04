@@ -34,6 +34,9 @@ export default function CandlesPage() {
               filters={filters}
               setFilters={setFilters}
               scents={candleScents}
+              isMobileOpen={isOpen}
+              setIsMobileOpen={setIsOpen}
+              filterCount={displayItems.length}
             />
           )}
 

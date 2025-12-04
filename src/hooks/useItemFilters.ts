@@ -18,9 +18,9 @@ export interface SidebarProps {
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
   scents: string[];
-  isMobileOpen?: boolean;
-  setIsMobileOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  filterCount?: number;
+  isMobileOpen: boolean;
+  setIsMobileOpen: React.Dispatch<React.SetStateAction<boolean>> ;
+  filterCount: number;
 }
 
 
