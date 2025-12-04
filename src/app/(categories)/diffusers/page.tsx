@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useCategoryItems } from "@/hooks/useCategoryItems";
 import ProductGrid from "@/components/productGrid";
 import Sidebar from "@/components/sorting/sidebar";
 import useItemFilters from "@/hooks/useItemFilters";
 import { diffuserScents } from "@/constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 export default function DiffusersPage() {
   const {
@@ -17,13 +19,31 @@ export default function DiffusersPage() {
   });
 
   const { filters, setFilters, filteredItems } = useItemFilters(items);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const displayItems = filteredItems || items;
 
   return (
     <div className="min-h-screen bg-white">
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-20">
           {/* Sidebar */}
-          <Sidebar filters={filters} setFilters={setFilters} scents={diffuserScents} />
+          {!isOpen ? (
+            <Sidebar
+              filters={filters}
+              setFilters={setFilters}
+              scents={diffuserScents}
+            />
+          ) : (
+            <Sidebar
+              filters={filters}
+              setFilters={setFilters}
+              scents={diffuserScents}
+              isMobileOpen={isOpen}
+              setIsMobileOpen={setIsOpen}
+              filterCount={displayItems.length}
+            />
+          )}
 
           {/* Main Content */}
           <main className="flex-1 min-w-0">
@@ -39,16 +59,28 @@ export default function DiffusersPage() {
 
               {/* Results Count */}
               {!itemsLoading && (
-                <p className="mt-6 text-sm text-neutral-500">
-                  {filteredItems.length}{" "}
-                  {filteredItems.length === 1 ? "product" : "products"} found
-                </p>
+                <div className="flex justify-between items-center py-3">
+                  <p className=" text-sm text-neutral-500 ">
+                    {displayItems.length}{" "}
+                    {displayItems.length === 1 ? "product" : "products"} found
+                  </p>
+
+                  {/* filter button */}
+                  <button
+                    type="button"
+                    className="ml-4 rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 lg:hidden"
+                    onClick={() => setIsOpen(!isOpen)}
+                  >
+                    <FontAwesomeIcon icon={faFilter} className="mr-2" />
+                    Filter
+                  </button>
+                </div>
               )}
             </div>
 
             {/* Products Grid */}
             <ProductGrid
-              items={filteredItems}
+              items={displayItems}
               isLoading={itemsLoading}
               error={itemsError?.message}
             />
