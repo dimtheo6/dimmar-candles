@@ -67,7 +67,7 @@ export default function ProductGrid({
   }
 console.log('Rendering item:', displayItems);
   return (
-    <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-8 grid-cols-2 max-[300px]:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4">
       
       {displayItems.map((item) => {   
         const fullSlug = `${item.slug}-${item.id}`;

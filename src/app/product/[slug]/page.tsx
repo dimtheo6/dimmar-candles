@@ -128,17 +128,17 @@ function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
       </nav>
 
       <div className="max-w-6xl mx-auto px-6 pb-16">
-        <div className="grid lg:grid-cols-2 gap-16">
+        <div className="grid sm:grid-cols-2 gap-16 max-sm:gap-8">
           {/* Product Image */}
           <div className="relative">
-            <div className="aspect-square bg-neutral-50 rounded-2xl overflow-hidden">
+            <div className="aspect-square  rounded-2xl overflow-hidden items-center justify-center flex">
               {product.imageUrl ? (
                 <Image
                   src={product.imageUrl[0]}
                   alt={product.name}
                   width={600}
                   height={600}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover max-sm:w-3/4 max-sm:h-3/4 max-sm:mx-auto "
                   priority
                 />
               ) : (
