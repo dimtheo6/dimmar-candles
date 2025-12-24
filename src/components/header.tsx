@@ -34,7 +34,7 @@ function Header() {
               Home
             </Link>
             <Link
-              href={"/products"}
+              href={"/candles"}
               className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               Products

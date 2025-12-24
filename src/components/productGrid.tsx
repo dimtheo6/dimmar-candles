@@ -81,7 +81,7 @@ export default function ProductGrid({
       {displayItems.map((item) => {
         const fullSlug = `${item.slug}-${item.id}`;
         return (
-          <div key={item.id} className="space-y-4">
+          <div key={item.id} className="space-y-4 group">
             <Link href={`/product/${fullSlug}`} className="group block">
               {/* Product Image */}
               <div className="space-y-3">
@@ -125,11 +125,11 @@ export default function ProductGrid({
             </Link>
 
             {/* Buy Button*/}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center">
               <div className="mt-2 text-center">
                 {item.inStock ? (
                   <button
-                    className="buy-button mt-2"
+                    className="buy-button  opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => handleAddToCart(item)}
                   >
                     Add to Cart

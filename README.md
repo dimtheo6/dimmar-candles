@@ -7,6 +7,7 @@
 ## 🚀 Quick start
 
 Prerequisites:
+
 - Node.js 18+ (recommended)
 - npm / pnpm / yarn
 
@@ -98,4 +99,3 @@ Create a `.env.local` file and provide the following variables used by the app a
 
 This project deploys easily to Vercel (recommended) — the App Router and Edge/Server routes work out of the box.
 When deploying, set all environment variables in your Vercel project settings.
-

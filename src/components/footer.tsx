@@ -27,9 +27,6 @@ function Footer() {
             <li>
               <Link href="/terms-of-service">Terms of Service</Link>
             </li>
-            <li>
-              <Link href="/refund">Refunds</Link>
-            </li>
           </ul>
         </div>
 
