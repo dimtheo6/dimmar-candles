@@ -3,7 +3,7 @@ import { SidebarProps } from "@/hooks/useItemFilters";
 import { SortBy } from "@/hooks/useItemFilters";
 
 const sortOptions = [
-  { value: "popularity", label: "Popularity" },
+  { value: "best selling", label: "Best Selling" },
   { value: "newest", label: "Newest" },
   { value: "price-low-high", label: "Price: Low to High" },
   { value: "price-high-low", label: "Price: High to Low" },

@@ -36,7 +36,7 @@ export function generateSlug(name: string): string {
 
 
 export const sortOptions: string[] = [
-  "popularity",
+  "best selling",
   "price-low-high",
   "price-high-low",
 ];

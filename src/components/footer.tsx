@@ -10,7 +10,7 @@ import Image from "next/image";
 
 function Footer() {
   return (
-    <div className="bg-neutral-100 border-t border-neutral-200 mt-20 p-10">
+    <div className="bg-stone-100 border-t border-neutral-200 mt-20 p-10">
       <div className="flex gap-5 sm:justify-evenly sm:flex-row flex-col">
         <div className="space-y-3">
           <h3 className="text-lg font-bold">Help & Support</h3>

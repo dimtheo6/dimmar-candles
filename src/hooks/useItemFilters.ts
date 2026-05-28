@@ -27,7 +27,7 @@ export interface SidebarProps {
 function useItemFilters(items: Item[] = []) {
   // State to track current filter selections
   const [filters, setFilters] = useState<FilterState>({
-    sortBy: "popularity", // Default sorting method
+    sortBy: "best selling", // Default sorting method
     scents: [], // Start with no sce  nt filters applied
   });
 
@@ -52,7 +52,7 @@ function useItemFilters(items: Item[] = []) {
         // Sort by price descending (most expensive first)
         return [...result].sort((a, b) => b.price - a.price);
       default:
-        // "popularity" or any other sortBy - keep original order
+        // "best selling" or any other sortBy - keep original order
         return result;
     }
   }, [items, filters]);
