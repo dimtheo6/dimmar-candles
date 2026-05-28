@@ -15,7 +15,7 @@ export default function CartButton() {
     >
       <FontAwesomeIcon
         icon={faCartShopping}
-        className="w-5 h-5 text-neutral-600 group-hover:text-neutral-900 transition-colors"
+        className="w-5 h-5 text-neutral-600 group-hover:text-neutral-900 transition-colors cursor-pointer"
       />
       
       {/* Show count badge if items in cart */}

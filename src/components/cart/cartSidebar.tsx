@@ -41,7 +41,7 @@ export default function CartSidebar() {
             </h2>
             <button
               onClick={closeCart}
-              className="text-2xl text-neutral-400 hover:text-neutral-600"
+              className="text-2xl text-neutral-400 hover:text-neutral-600 cursor-pointer"
             >
               ×
             </button>

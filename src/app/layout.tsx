@@ -5,10 +5,8 @@ config.autoAddCss = false; // PREVENT DUPLICATE INJECTION
 import type { Metadata } from "next";
 import "./globals.css";
 import { bodyFontVars } from "@/lib/fonts";
-import Header from "@/components/header";
 import ReactQueryProvider from "@/components/providers/react-query-provider";
-import CartSidebar from "@/components/cart/cartSidebar";
-import Footer from "@/components/footer";
+import Shell from "@/components/providers/shell";
 import ScrollToTop from "@/utils/scrollToTop";
 
 export const metadata: Metadata = {
@@ -21,16 +19,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html lang="en">
       <ScrollToTop />
       <body className={`${bodyFontVars} antialiased`}>
         <ReactQueryProvider>
-          <Header />
-          {children}
-          <CartSidebar />
-          <Footer />
+          <Shell>{children}</Shell>
         </ReactQueryProvider>
       </body>
     </html>
