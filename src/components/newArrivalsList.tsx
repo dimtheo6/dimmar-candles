@@ -54,7 +54,7 @@ function NewArrivalsList() {
         </div>
       )}
       {!isLoading && !errorMessage && items.length > 0 && (
-        <div className="flex gap-6 overflow-x-auto scroll-smooth mt-6 pb-4">
+        <div className="flex gap-6  overflow-x-auto scroll-smooth scrollbar-hidden mt-6 pb-4">
           {items.map((item) => {
             // Create slug with ID at the end for product page routing
             const fullSlug = `${item.slug}-${item.id}`;
