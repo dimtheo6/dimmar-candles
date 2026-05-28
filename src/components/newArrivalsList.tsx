@@ -54,13 +54,13 @@ function NewArrivalsList() {
         </div>
       )}
       {!isLoading && !errorMessage && items.length > 0 && (
-        <div className="grid gap-6 grid-cols-2 md:grid-cols-4 mt-6">
+        <div className="flex gap-6 overflow-x-auto scroll-smooth mt-6 pb-4">
           {items.map((item) => {
             // Create slug with ID at the end for product page routing
             const fullSlug = `${item.slug}-${item.id}`;
             return (
               <div
-                className="relative group border border-neutral-300 rounded-xl p-3 bg-white shadow hover:shadow-md transition"
+                className="relative group min-w-[220px] max-w-[220px] border border-neutral-300 rounded-xl p-3 bg-white shadow hover:shadow-md transition flex-shrink-0"
                 key={item.id}
               >
                 <Link href={`/product/${fullSlug}`} prefetch>

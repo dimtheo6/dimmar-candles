@@ -88,6 +88,51 @@ Create a `.env.local` file and provide the following variables used by the app a
 
 ---
 
+## 🧪 Testing Payments
+
+### Stripe (card & Afterpay)
+
+Make sure you are using **test/sandbox keys** (`sk_test_...` / `pk_test_...`) in your `.env.local`.
+
+**Test card numbers (AUD):**
+
+| Scenario                              | Card number           | Expiry          | CVC          |
+| ------------------------------------- | --------------------- | --------------- | ------------ |
+| Successful payment                    | `4242 4242 4242 4242` | Any future date | Any 3 digits |
+| Payment requires authentication (3DS) | `4000 0025 0000 3155` | Any future date | Any 3 digits |
+| Card declined                         | `4000 0000 0000 9995` | Any future date | Any 3 digits |
+
+**Afterpay/Clearpay:** Use the test card above (`4242...`) when prompted inside the Afterpay modal. Afterpay test mode auto-approves payments without a real account.
+
+**Testing webhooks locally:**
+
+1. Install the [Stripe CLI](https://stripe.com/docs/stripe-cli).
+2. Log in: `stripe login`
+3. Forward events to your local server:
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+   ```
+4. Copy the **webhook signing secret** printed by the CLI (`whsec_...`) and set it as `STRIPE_WEBHOOK_SECRET` in `.env.local`.
+5. Trigger a test event manually if needed:
+   ```bash
+   stripe trigger payment_intent.succeeded
+   ```
+
+Full list of Stripe test cards: https://stripe.com/docs/testing#cards
+
+---
+
+### PayPal
+
+Make sure `PAYPAL_API_BASE` is set to the sandbox URL (or left unset — it defaults to `https://api-m.sandbox.paypal.com`) and that you're using sandbox credentials.
+
+1. Create a [PayPal Developer](https://developer.paypal.com/dashboard/) account and navigate to **Sandbox > Accounts**.
+2. Use the auto-generated **buyer** sandbox account to log in and approve payments during checkout.
+3. Use the auto-generated **merchant** sandbox account credentials as `PAYPAL_CLIENT_ID` / `PAYPAL_SECRET`.
+4. After a successful capture you can verify the transaction in the **Sandbox > Transactions** dashboard.
+
+---
+
 ## 🔁 Payments & Orders
 
 - Stripe: server-side Payment Intent creation at `/api/create-payment-intent`, and webhook handling in `/api/webhooks/stripe`.
