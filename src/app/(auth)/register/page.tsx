@@ -4,20 +4,79 @@ import { useState } from "react";
 import Link from "next/link";
 import { courgette } from "@/lib/fonts";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { serverTimestamp } from "firebase/firestore";
 
 const RegisterPage = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword){
-      alert("Passwords do not match!");
-      return;
 
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
     }
-  }
+
+    try {
+      setLoading(true);
+
+      // Create Firebase Auth user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password,
+      );
+
+      const user = userCredential.user;
+
+      // Save extra user info in Firesstore
+
+      await setDoc(doc(db, "users", user.uid), {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        createdAt: serverTimestamp(),
+      });
+
+      console.log("Account created!");
+    } catch (err: any) {
+      console.log(err);
+
+      switch (err.code) {
+        case "auth/email-already-in-use":
+          setError("Email already exists");
+          break;
+
+        case "auth/weak-password":
+          setError("Password must be at least 6 characters");
+          break;
+
+        case "auth/invalid-email":
+          setError("Invalid email");
+          break;
+
+        default:
+          setError("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-stone-100 flex">
@@ -74,6 +133,10 @@ const RegisterPage = () => {
                   id="first-name"
                   autoComplete="given-name"
                   placeholder="John"
+                  value={formData.firstName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
                   className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
                   required
                 />
@@ -92,6 +155,10 @@ const RegisterPage = () => {
                     id="last-name"
                     autoComplete="family-name"
                     placeholder="Doe"
+                    value={formData.lastName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, lastName: e.target.value })
+                    }
                     className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
                     required
                   />
@@ -111,6 +178,10 @@ const RegisterPage = () => {
                 id="email"
                 autoComplete="email"
                 placeholder="you@example.com"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
                 required
               />
@@ -132,7 +203,10 @@ const RegisterPage = () => {
                   id="password"
                   autoComplete="current-password"
                   placeholder="Enter your password"
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                   className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 pr-11 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
                   required
                 />
@@ -164,7 +238,13 @@ const RegisterPage = () => {
                   id="confirm-password"
                   autoComplete="new-password"
                   placeholder="Confirm your password"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  value={formData.confirmPassword}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
                   className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 pr-11 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
                   required
                 />
@@ -181,7 +261,7 @@ const RegisterPage = () => {
                   )}
                 </button>
               </div>
-              {password !== confirmPassword && (
+              {formData.password !== formData.confirmPassword && (
                 <p className="text-sm text-red-500">Passwords do not match</p>
               )}
             </div>
