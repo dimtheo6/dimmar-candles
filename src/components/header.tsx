@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { courgette } from "@/lib/fonts";
 import Link from "next/link";
 import CartButton from "./cart/cartButton";
+import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 function Header() {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Logged in:", user);
+      } else {
+        console.log("Logged out");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   return (
     <header className=" bg-white border-b border-neutral-200 sticky top-0 z-30 select-none">
       {/* Top announcement bar */}
@@ -52,9 +67,20 @@ function Header() {
               Contact
             </Link>
           </nav>
+          <div className="flex items-center space-x-4">
+            <div className="relative group inline-block">
+              <Link href={"/login"}>
+                <FontAwesomeIcon
+                  icon={faCircleUser}
+                  className="text-xl text-neutral-600 hover:text-neutral-900 transition-colors cursor-pointer"
+                />
+              </Link>
 
+              {/* Dropdown menu */}
+              
+            </div>
             <CartButton />
-   
+          </div>
         </div>
       </div>
     </header>

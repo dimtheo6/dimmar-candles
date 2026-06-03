@@ -9,6 +9,8 @@ import { carouselItems } from "@/constants";
 
 
 export default function Home() {
+
+
   return (
     <>
       <Carousel

@@ -4,9 +4,37 @@ import { useState } from "react";
 import Link from "next/link";
 import { courgette } from "@/lib/fonts";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import {signInWithEmailAndPassword } from "firebase/auth";
+import {auth} from "@/lib/firebase";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit= async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+  
+    try{
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      
+      const user = userCredential.user;
+      console.log("Logged in user:", user);
+      // Redirect or show success message
+    } catch (error) {
+      console.error("Error logging in:", error);
+      // Handle error (e.g., show error message)
+    } finally {
+      setLoading(false);
+    }
+  }
+    
 
   return (
     <div className="min-h-screen bg-stone-100 flex">
@@ -48,7 +76,7 @@ const LoginPage = () => {
             </p>
           </div>
 
-          <form action="#" className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
               <label
@@ -62,6 +90,8 @@ const LoginPage = () => {
                 id="email"
                 autoComplete="email"
                 placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
               />
             </div>
@@ -88,6 +118,8 @@ const LoginPage = () => {
                   id="password"
                   autoComplete="current-password"
                   placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 pr-11 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
                 />
                 <button
