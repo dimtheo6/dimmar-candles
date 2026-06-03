@@ -42,7 +42,7 @@ const LoginPage = () => {
     <div className="min-h-screen bg-stone-100 flex">
       {/* Left decorative panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-stone-900 flex-col items-center justify-center gap-6 p-16 text-center">
-        <h1 className={`${courgette.className} text-white text-5xl`}>Dimmar</h1>
+        <Link href={"/"} className={`${courgette.className} text-white text-5xl`}>Dimmar</Link>
         <p className="text-stone-400 text-base leading-relaxed max-w-xs">
           Handcrafted candles &amp; homewares, made with care. Bringing warmth
           to every home.
@@ -64,9 +64,9 @@ const LoginPage = () => {
         <div className="w-full max-w-sm space-y-8">
           {/* Mobile brand */}
           <div className="lg:hidden text-center">
-            <h1 className={`${courgette.className} text-stone-900 text-4xl`}>
+            <Link href={"/"} className={`${courgette.className} text-stone-900 text-4xl`}>
               Dimmar
-            </h1>
+            </Link>
           </div>
 
           <div>

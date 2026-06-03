@@ -4,7 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { courgette } from "@/lib/fonts";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
@@ -46,6 +49,9 @@ const RegisterPage = () => {
 
       const user = userCredential.user;
 
+      // verify email
+      // await sendEmailVerification(user);
+
       // Save extra user info in Firesstore
 
       await setDoc(doc(db, "users", user.uid), {
@@ -85,7 +91,7 @@ const RegisterPage = () => {
     <div className="min-h-screen bg-stone-100 flex">
       {/* Left decorative panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-stone-900 flex-col items-center justify-center gap-6 p-16 text-center">
-        <h1 className={`${courgette.className} text-white text-5xl`}>Dimmar</h1>
+        <Link href={"/"} className={`${courgette.className} text-white text-5xl`}>Dimmar</Link>
         <p className="text-stone-400 text-base leading-relaxed max-w-xs">
           Handcrafted candles &amp; homewares, made with care. Bringing warmth
           to every home.
@@ -107,9 +113,9 @@ const RegisterPage = () => {
         <div className="w-full max-w-sm space-y-8">
           {/* Mobile brand */}
           <div className="lg:hidden text-center">
-            <h1 className={`${courgette.className} text-stone-900 text-4xl`}>
+            <Link href={"/"} className={`${courgette.className} text-stone-900 text-4xl`}>
               Dimmar
-            </h1>
+            </Link>
           </div>
 
           <div>
@@ -179,7 +185,6 @@ const RegisterPage = () => {
               <input
                 type="email"
                 id="email"
-                autoComplete="email"
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={(e) =>
@@ -188,6 +193,7 @@ const RegisterPage = () => {
                 className="w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition"
                 required
               />
+              <p className="text-sm text-red-500">{error}</p>
             </div>
 
             {/* Password */}
@@ -204,7 +210,6 @@ const RegisterPage = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  autoComplete="current-password"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) =>
@@ -239,7 +244,6 @@ const RegisterPage = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   id="confirm-password"
-                  autoComplete="new-password"
                   placeholder="Confirm your password"
                   value={formData.confirmPassword}
                   onChange={(e) =>
