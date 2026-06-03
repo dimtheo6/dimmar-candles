@@ -4,37 +4,39 @@ import { useState } from "react";
 import Link from "next/link";
 import { courgette } from "@/lib/fonts";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import {signInWithEmailAndPassword } from "firebase/auth";
-import {auth} from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  const handleSubmit= async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-  
-    try{
+
+    try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
-      
+
       const user = userCredential.user;
       console.log("Logged in user:", user);
       // Redirect or show success message
+      router.push("/");
     } catch (error) {
       console.error("Error logging in:", error);
       // Handle error (e.g., show error message)
     } finally {
       setLoading(false);
     }
-  }
-    
+  };
 
   return (
     <div className="min-h-screen bg-stone-100 flex">

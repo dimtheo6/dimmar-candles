@@ -8,6 +8,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +56,7 @@ const RegisterPage = () => {
       });
 
       console.log("Account created!");
+      router.push("/register_success");
     } catch (err: any) {
       console.log(err);
 
