@@ -55,6 +55,7 @@ const RegisterPage = () => {
       // Save extra user info in Firesstore
 
       await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,

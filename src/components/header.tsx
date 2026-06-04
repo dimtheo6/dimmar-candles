@@ -1,19 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { courgette } from "@/lib/fonts";
 import Link from "next/link";
 import CartButton from "./cart/cartButton";
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { User } from "firebase/auth";
-import { useState } from "react";
 
 function Header() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         console.log("Logged in:", user);
         setLoggedUser(user);
@@ -96,19 +94,18 @@ function Header() {
               <div className="hidden absolute top-5 -left-10 group-hover:flex flex-col border border-gray-100 bg-white text-sm py-2 px-5 shadow-lg z-50 gap-2 whitespace-nowrap cursor-pointer">
                 {loggedUser ? (
                   <>
-                  
-                  <div className=" font-bold">{loggedUser?.email}</div>
-                   <div className="border-b-[1px] border-gray-300"></div>
-                <div className="text-neutral-600 hover:text-neutral-900">
-                  My orders
-                </div>
-                <Link
-                  href={"/"}
-                  onClick={handleLogout}
-                  className="text-neutral-600 hover:text-neutral-900"
-                >
-                  Sign Out
-                </Link>
+                    <div className=" font-bold">{loggedUser?.email}</div>
+                    <div className="border-b-[1px] border-gray-300"></div>
+                    <div className="text-neutral-600 hover:text-neutral-900">
+                      My orders
+                    </div>
+                    <Link
+                      href={"/"}
+                      onClick={handleLogout}
+                      className="text-neutral-600 hover:text-neutral-900"
+                    >
+                      Sign Out
+                    </Link>
                   </>
                 ) : (
                   <Link
@@ -118,7 +115,6 @@ function Header() {
                     Sign in / Register
                   </Link>
                 )}
-               
               </div>
             </div>
             <CartButton />
