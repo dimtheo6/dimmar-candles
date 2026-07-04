@@ -9,20 +9,23 @@ import { auth } from "@/lib/firebase";
 
 function Header() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log("Logged in:", user);
-        setLoggedUser(user);
-        console.log("user is ", loggedUser);
-      } else {
-        console.log("Logged out");
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
         setLoggedUser(null);
+        setIsAdmin(false);
+        return;
       }
+
+      user.getIdTokenResult().then((token) => {
+        setLoggedUser(user);
+        setIsAdmin(!!token.claims.admin);
+      });
     });
 
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
 
   const handleLogout = async () => {
@@ -95,10 +98,14 @@ function Header() {
                 {loggedUser ? (
                   <>
                     <div className=" font-bold">{loggedUser?.email}</div>
-                    <div className="border-b-[1px] border-gray-300"></div>
-                    <div className="text-neutral-600 hover:text-neutral-900">
-                      My orders
-                    </div>
+                    <div className="border-b border-gray-300"></div>
+                    {isAdmin ? (
+                      <Link href={"/admin"} className="text-neutral-600 hover:text-neutral-900">Dashboard</Link>
+                    ) : (
+                      <div className="text-neutral-600 hover:text-neutral-900">
+                        My orders
+                      </div>
+                    )}
                     <Link
                       href={"/"}
                       onClick={handleLogout}

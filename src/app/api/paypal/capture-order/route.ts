@@ -206,7 +206,6 @@ export async function POST(req: Request) {
       status: data.status === "COMPLETED" ? "paid" : "pending",
       customer: { email, name: customerName },
       items,
-      raw: data,
     });
 
     return NextResponse.json({ id: data.id, status: data.status });

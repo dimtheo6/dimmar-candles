@@ -1,12 +1,16 @@
 // src/lib/orders.ts
 // Utilities for persisting orders and sending confirmation emails
 
-import { db } from "./firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { getAdminDb } from "./firebaseAdmin";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/emailTemplate";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Get all orders
+export async function getOrders(): Promise<OrderRecord[]> {
+  const db = getAdminDb();
+  const snapshot = await db.collection("orders").get();
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as OrderRecord));
+}
 
 export interface OrderItem {
   productId?: string;
@@ -21,7 +25,7 @@ export interface OrderRecord {
   provider: "stripe" | "paypal";
   providerIntentId?: string;
   providerOrderId?: string;
-  status: "pending" | "paid" | "failed" | "refunded";
+  status: "pending" | "paid" | "failed" | "refunded" | "processing" | "shipped";
   currency: string;
   amountTotal: number; // in cents
   customer: { email: string; name?: string };
@@ -60,24 +64,36 @@ function resolveOrderKey(p: SaveParams) {
   );
 }
 
+export async function updateOrderStatus(
+  id: string,
+  status: OrderRecord["status"]
+): Promise<void> {
+  const db = getAdminDb();
+  await db.collection("orders").doc(id).update({ status, updatedAt: Date.now() });
+}
+
 export async function saveOrUpdateOrder(p: SaveParams): Promise<string> {
+  const db = getAdminDb();
   const key = resolveOrderKey(p);
-  const ref = doc(db, "orders", key);
-  const existing = await getDoc(ref);
-  const base: Partial<OrderRecord> = existing.exists() ? existing.data() : {};
+  const ref = db.collection("orders").doc(key);
+  const existing = await ref.get();
+  const base = existing.exists ? (existing.data() as Partial<OrderRecord>) : {};
   const now = Date.now();
 
+  // Omit raw — Stripe/PayPal objects may contain non-serializable values
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { raw: _raw, ...rest } = p;
   const order: OrderRecord = {
     ...base,
-    ...p,
+    ...rest,
     id: key,
     displayId: base.displayId || `DIM-${now.toString().slice(-8)}`,
     createdAt: base.createdAt || now,
     updatedAt: now,
   };
-  console.log("[orders] upserting", order);
+  console.log("[orders] upserting", { key, status: order.status });
 
-  await setDoc(ref, order);
+  await ref.set(order);
 
   // Fire off confirmation email if order is "paid"
   if (order.status === "paid") {
@@ -90,6 +106,8 @@ export async function saveOrUpdateOrder(p: SaveParams): Promise<string> {
 // Simple email sender with Resend
 export async function sendOrderConfirmationEmail(order: OrderRecord) {
   if (!process.env.ORDER_EMAIL_FROM) return;
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     // Send email

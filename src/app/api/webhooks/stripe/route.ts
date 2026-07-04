@@ -123,7 +123,16 @@ export async function POST(req: Request) {
         status,
         customer: { email, name: customerName },
         items,
-        raw: pi,
+        shipping: pi.shipping?.address
+          ? {
+              name: pi.shipping.name ?? undefined,
+              address1: pi.shipping.address.line1 ?? undefined,
+              address2: pi.shipping.address.line2 ?? undefined,
+              suburb: pi.shipping.address.city ?? undefined,
+              state: pi.shipping.address.state ?? undefined,
+              postcode: pi.shipping.address.postal_code ?? undefined,
+            }
+          : undefined,
       });
     } else {
       // Ignored event types for now

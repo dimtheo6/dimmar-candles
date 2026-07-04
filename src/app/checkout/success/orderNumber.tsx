@@ -3,17 +3,21 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useCartStore } from "@/store/cartStore";
 
 export default function OrderNumber() {
   const [orderNumber, setOrderNumber] = useState("");
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
+  const clearCart = useCartStore((state) => state.clearCart);
 
   // Get order reference from URL params
   const paypalOrder = searchParams.get("order"); // e.g. "paypal-123456"
   const stripeIntent = searchParams.get("payment_intent"); // Stripe redirect param
 
   useEffect(() => {
+    clearCart();
+
     const fetchOrderNumber = async () => {
       let orderKey = "";
 
